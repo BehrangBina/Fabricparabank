@@ -1,6 +1,9 @@
-﻿using FabricParaBank.Tests.Util;
+﻿using FabricParaBank.Tests.Model;
+using FabricParaBank.Tests.Util;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Playwright;
+using Reqnroll;
 
 namespace FabricParaBank.Tests.Pages;
 
@@ -14,18 +17,18 @@ public class RegistrationPage(IPage page,ILogger logger)
     private const string StateInput = "[name='customer.address.state']";
     private const string ZipCodeInput = "[name='customer.address.zipCode']";
     private const string PhoneNumberInput = "[name='customer.phoneNumber']";
-    private const string SSNInput = "[name='customer.ssn']";
+    private const string SsnInput = "[name='customer.ssn']";
     private const string UsernameInput = "[name='customer.username']";
     private const string PasswordInput = "[name='customer.password']";
     private const string RepeatedPasswordInput = "[name='repeatedPassword']";
-
+    private const string WelcomeMessage = "#rightPanel h1.title";
     public async Task ClickOnRegister()
     {
         logger.LogInformation("Click on the register button with locator {Locator}" ,RegisterLink);
         await page.ClickAsync(RegisterLink);
     }
 
-    public async Task FillsTheUserInformation()
+    public async Task FillsTheUserInformation(ScenarioContext scenarioContext)
     {
         var userData = Helper.GetTestUser(logger);
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", FirstNameInput, userData.FirstName);
@@ -49,8 +52,8 @@ public class RegistrationPage(IPage page,ILogger logger)
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", PhoneNumberInput, userData.PhoneNumber);
         await page.FillAsync(PhoneNumberInput, userData.PhoneNumber);
 
-        logger.LogInformation("Fills user data with locator {Locator} value {Value}", SSNInput, userData.SSN);
-        await page.FillAsync(SSNInput, userData.SSN);
+        logger.LogInformation("Fills user data with locator {Locator} value {Value}", SsnInput, userData.SSN);
+        await page.FillAsync(SsnInput, userData.SSN);
 
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", UsernameInput, userData.Username);
         await page.FillAsync(UsernameInput, userData.Username);
@@ -60,6 +63,22 @@ public class RegistrationPage(IPage page,ILogger logger)
 
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", RepeatedPasswordInput, userData.Password);
         await page.FillAsync(RepeatedPasswordInput, userData.Password);
+        
+        logger.LogInformation("adding user to the scenario context {sc}",userData);
+        scenarioContext.Add("CurrentUser", userData);
+    }
 
+    public async Task ValidateWelcomeMessage(ScenarioContext scenarioContext)
+    {
+        logger.LogInformation("ValidateWelcomeMessage");
+        logger.LogInformation("Getting user name from scenario context");
+        var testUser = scenarioContext.Get<TestUser>("CurrentUser");
+        var userName = testUser.Username;
+        var expectedMessage = $"Welcome {userName}";
+        var successMessage = await page.Locator(WelcomeMessage).InnerTextAsync();
+        successMessage.Trim()
+            .Should()
+            .Contain(expectedMessage,
+            "because the user should see a success message after registration");
     }
 }

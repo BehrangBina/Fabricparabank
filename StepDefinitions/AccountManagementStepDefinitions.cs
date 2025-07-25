@@ -12,13 +12,17 @@ namespace FabricParaBank.Tests.StepDefinitions;
 public class AccountManagementStepDefinitions(ScenarioContext scenarioContext,ITestOutputHelper output) : PlaywrightTestBase
 {
     private readonly ILogger _logger = output.ToLogger<AccountManagementStepDefinitions>();
-    private RegistrationPage registrationPage;
+    private RegistrationPage? _registrationPage;
+    private LoginPage? _loginPage;
+    private AccountPage? _accountPage;
     [BeforeScenario]
     public async Task Setup()
     {
         _logger.LogInformation("Setup initiated");
         await InitializeAsync();
-        registrationPage = new RegistrationPage(Page, _logger);
+        _registrationPage = new RegistrationPage(Page, _logger);
+        _loginPage = new LoginPage(Page, _logger);
+        _accountPage = new AccountPage(Page, _logger);
     }
 
     [Given("I navigate to the Para Bank application")]
@@ -45,7 +49,33 @@ public class AccountManagementStepDefinitions(ScenarioContext scenarioContext,IT
     [When("I register a new user with a unique username")]
     public async Task WhenIRegisterANewUserWithAUniqueUsername()
     {
-       await registrationPage.ClickOnRegister();
-       await registrationPage.FillsTheUserInformation();
+       await _registrationPage!.ClickOnRegister();
+       await _registrationPage.FillsTheUserInformation(scenarioContext);
     }
+
+    [Then("I can see welcome message on the screen")]
+    public async Task ThenICanSeeWelcomeMessageOnTheScreen()
+    {
+        await _registrationPage!.ValidateWelcomeMessage(scenarioContext);
+    }
+
+    [When("I log in using the newly registered user credentials")]
+    public async Task WhenILogInUsingTheNewlyRegisteredUserCredentials()
+    {
+       await _loginPage!.PerformLogin(scenarioContext);
+    }
+
+
+    [Then("I can validate global navigation menu for the logged in user")]
+    public async Task ThenICanValidateGlobalNavigationMenuForTheLoggedInUser(Table table)
+    {
+       await _loginPage!.CheckMenuNavigation(table);
+    }
+
+    [When("I create a new account of type {string}")]
+    public async Task WhenICreateANewAccountOfTypeAndCaptureTheAccountNumber(string accountType)
+    {
+        await _loginPage!.ClickOnLink(accountType);
+    }
+
 }

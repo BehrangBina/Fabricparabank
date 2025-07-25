@@ -137,7 +137,7 @@ namespace FabricParaBank.Tests.Fearures
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("End-to-end banking workflow for a newly registered user", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
-this.ScenarioInitialize(scenarioInfo);
+    this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
             {
@@ -146,11 +146,41 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 await this.ScenarioStartAsync();
-#line 7
-    await testRunner.GivenAsync("I navigate to the Para Bank application", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
-#line hidden
 #line 8
-    await testRunner.WhenAsync("I register a new user with a unique username", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+        await testRunner.GivenAsync("I navigate to the Para Bank application", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 9
+        await testRunner.WhenAsync("I register a new user with a unique username", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 10
+        await testRunner.ThenAsync("I can see welcome message on the screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 12
+        await testRunner.WhenAsync("I log in using the newly registered user credentials", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+                global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
+                            "Navigation Links"});
+                table1.AddRow(new string[] {
+                            "Open New Account"});
+                table1.AddRow(new string[] {
+                            "Accounts Overview"});
+                table1.AddRow(new string[] {
+                            "Transfer Funds"});
+                table1.AddRow(new string[] {
+                            "Bill Pay"});
+                table1.AddRow(new string[] {
+                            "Find Transactions"});
+                table1.AddRow(new string[] {
+                            "Update Contact Info"});
+                table1.AddRow(new string[] {
+                            "Request Loan"});
+                table1.AddRow(new string[] {
+                            "Log Out"});
+#line 14
+        await testRunner.ThenAsync("I can validate global navigation menu for the logged in user", ((string)(null)), table1, "Then ");
+#line hidden
+#line 24
+        await testRunner.WhenAsync("I create a new account of type \"Open New Account\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
