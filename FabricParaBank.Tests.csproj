@@ -8,21 +8,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.2"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        <PackageReference Include="Microsoft.Playwright" Version="1.54.0"/>
-        <PackageReference Include="Reqnroll.XUnit" Version="2.4.1"/>
-        <PackageReference Include="xunit" Version="2.9.2"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"/>
-        <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.5.1"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.1"/>
+        <PackageReference Include="coverlet.collector" Version="6.0.2" />
+        <PackageReference Include="FluentAssertions" Version="7.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+        <PackageReference Include="Microsoft.Playwright" Version="1.54.0" />
+        <PackageReference Include="Reqnroll.XUnit" Version="2.4.1" />
+        <PackageReference Include="xunit" Version="2.9.2" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+        <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.5.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Include="Xunit" />
     </ItemGroup>
     <ItemGroup>
         <None Update="**/*.feature">
@@ -31,10 +32,6 @@
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Fearures\"/>
-        <Folder Include="StepDefinitions\"/>
     </ItemGroup>
 
 </Project>

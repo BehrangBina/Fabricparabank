@@ -9,7 +9,8 @@ public abstract class PlaywrightTestBase : IAsyncLifetime
     protected IBrowser Browser { get; private set; }
     protected IBrowserContext Context { get; private set; }
     protected IPage Page { get; private set; }
-    protected TestSettings Settings { get; private set; }
+    protected TestSettings Settings { get; private set; } = ConfigLoader.Load();
+
 
     public async Task InitializeAsync()
     {
