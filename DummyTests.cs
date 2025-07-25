@@ -4,14 +4,14 @@ using Xunit.Abstractions;
 
 namespace FabricParaBank.Tests;
 
-public class DummyTests(ITestOutputHelper output) : PlaywrightTestBase
+public class DummyTests(ITestOutputHelper output)  
 
 {
     private readonly ILogger _logger = output.ToLogger<DummyTests>();
 
     [Fact]
-    public async Task Test1()
+    public void Test1()
     {
-        await Page.GotoAsync(Settings.BaseUrl);
+       var un = Helper.GetUniqueUser(_logger);
     }
 }

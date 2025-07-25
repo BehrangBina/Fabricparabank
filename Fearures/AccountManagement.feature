@@ -5,3 +5,4 @@ So that I can use the core features of the Para Bank application
 
 Scenario: End-to-end banking workflow for a newly registered user
     Given I navigate to the Para Bank application
+    When I register a new user with a unique username

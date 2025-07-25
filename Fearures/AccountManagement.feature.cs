@@ -149,6 +149,9 @@ this.ScenarioInitialize(scenarioInfo);
 #line 7
     await testRunner.GivenAsync("I navigate to the Para Bank application", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
+#line 8
+    await testRunner.WhenAsync("I register a new user with a unique username", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
             }
             await this.ScenarioCleanupAsync();
         }
