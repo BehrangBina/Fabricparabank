@@ -12,6 +12,6 @@ public class DummyTests(ITestOutputHelper output)
     [Fact]
     public void Test1()
     {
-       var un = Helper.GetUniqueUser(_logger);
+       var un = Helper.GetTestUser(_logger);
     }
 }

@@ -46,5 +46,6 @@ public class AccountManagementStepDefinitions(ScenarioContext scenarioContext,IT
     public async Task WhenIRegisterANewUserWithAUniqueUsername()
     {
        await registrationPage.ClickOnRegister();
+       await registrationPage.FillsTheUserInformation();
     }
 }
