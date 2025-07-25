@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schemas.reqnroll.net/reqnroll-config-latest.json",
+  "framework": {
+    "unitTestProvider": "xUnit"
+  },
+  "trace": {
+    "traceSuccessfulSteps": true,
+    "traceTimings": true
+  }
+} 
