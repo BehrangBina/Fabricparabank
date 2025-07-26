@@ -22,13 +22,14 @@ public class RegistrationPage(IPage page,ILogger logger)
     private const string PasswordInput = "[name='customer.password']";
     private const string RepeatedPasswordInput = "[name='repeatedPassword']";
     private const string WelcomeMessage = "#rightPanel h1.title";
+    private const string SubmitButton = "[value='Register']";
     public async Task ClickOnRegister()
     {
         logger.LogInformation("Click on the register button with locator {Locator}" ,RegisterLink);
         await page.ClickAsync(RegisterLink);
     }
 
-    public async Task FillsTheUserInformation(ScenarioContext scenarioContext)
+    public async Task FillsTheUserInformation(FeatureContext featureContext)
     {
         var userData = Helper.GetTestUser(logger);
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", FirstNameInput, userData.FirstName);
@@ -52,8 +53,8 @@ public class RegistrationPage(IPage page,ILogger logger)
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", PhoneNumberInput, userData.PhoneNumber);
         await page.FillAsync(PhoneNumberInput, userData.PhoneNumber);
 
-        logger.LogInformation("Fills user data with locator {Locator} value {Value}", SsnInput, userData.SSN);
-        await page.FillAsync(SsnInput, userData.SSN);
+        logger.LogInformation("Fills user data with locator {Locator} value {Value}", SsnInput, userData.Ssn);
+        await page.FillAsync(SsnInput, userData.Ssn);
 
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", UsernameInput, userData.Username);
         await page.FillAsync(UsernameInput, userData.Username);
@@ -65,14 +66,14 @@ public class RegistrationPage(IPage page,ILogger logger)
         await page.FillAsync(RepeatedPasswordInput, userData.Password);
         
         logger.LogInformation("adding user to the scenario context {sc}",userData);
-        scenarioContext.Add("CurrentUser", userData);
+        featureContext.Add("CurrentUser", userData);
     }
 
-    public async Task ValidateWelcomeMessage(ScenarioContext scenarioContext)
+    public async Task ValidateWelcomeMessage(FeatureContext featureContext)
     {
         logger.LogInformation("ValidateWelcomeMessage");
         logger.LogInformation("Getting user name from scenario context");
-        var testUser = scenarioContext.Get<TestUser>("CurrentUser");
+        var testUser = featureContext.Get<TestUser>("CurrentUser");
         var userName = testUser.Username;
         var expectedMessage = $"Welcome {userName}";
         var successMessage = await page.Locator(WelcomeMessage).InnerTextAsync();
@@ -81,4 +82,12 @@ public class RegistrationPage(IPage page,ILogger logger)
             .Contain(expectedMessage,
             "because the user should see a success message after registration");
     }
+
+    public async Task ClickOnRegisterButton()
+    {
+        logger.LogInformation("Click on the register button");
+        await page.Locator(SubmitButton).ClickAsync();
+    }
+
+
 }

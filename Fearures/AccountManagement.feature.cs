@@ -103,6 +103,24 @@ namespace FabricParaBank.Tests.Fearures
             await testRunner.CollectScenarioErrorsAsync();
         }
         
+        public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
+        {
+#line 6
+    #line hidden
+#line 8
+        await testRunner.GivenAsync("I navigate to the Para Bank application", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 9
+        await testRunner.WhenAsync("I register a new user with a unique username", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 10
+        await testRunner.ThenAsync("I can see welcome message on the screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 11
+        await testRunner.ThenAsync("I logout from the system", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+        }
+        
         async global::System.Threading.Tasks.Task Xunit.IAsyncLifetime.InitializeAsync()
         {
             try
@@ -136,7 +154,7 @@ namespace FabricParaBank.Tests.Fearures
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("End-to-end banking workflow for a newly registered user", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 6
+#line 13
     this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -146,17 +164,11 @@ namespace FabricParaBank.Tests.Fearures
             else
             {
                 await this.ScenarioStartAsync();
-#line 8
-        await testRunner.GivenAsync("I navigate to the Para Bank application", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line 6
+    await this.FeatureBackgroundAsync();
 #line hidden
-#line 9
-        await testRunner.WhenAsync("I register a new user with a unique username", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 10
-        await testRunner.ThenAsync("I can see welcome message on the screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 12
-        await testRunner.WhenAsync("I log in using the newly registered user credentials", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 15
+        await testRunner.WhenAsync("I login using the newly registered user credentials", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
                 global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
                             "Navigation Links"});
@@ -176,11 +188,35 @@ namespace FabricParaBank.Tests.Fearures
                             "Request Loan"});
                 table1.AddRow(new string[] {
                             "Log Out"});
-#line 14
+#line 17
         await testRunner.ThenAsync("I can validate global navigation menu for the logged in user", ((string)(null)), table1, "Then ");
 #line hidden
-#line 24
+#line 28
         await testRunner.WhenAsync("I create a new account of type \"Open New Account\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 29
+        await testRunner.ThenAsync("I create a \"Savings\" account and validate it", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 30
+        await testRunner.AndAsync("I click on \"Transfer Funds\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 31
+        await testRunner.AndAsync("I transfer \"100\" to the created account", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 32
+        await testRunner.ThenAsync("Transfer has been successfully completed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 33
+        await testRunner.AndAsync("I click on \"Bill Pay\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 34
+        await testRunner.WhenAsync("I pay a bill using the new account", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 35
+        await testRunner.AndAsync("I click on \"Accounts Overview\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 36
+        await testRunner.ThenAsync("the payment should be processed and balance updated", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

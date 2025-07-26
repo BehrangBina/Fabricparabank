@@ -9,13 +9,14 @@ namespace FabricParaBank.Tests.Pages;
 public class LoginPage(IPage page,ILogger logger)
 {
     private const string UserNameInput = "[name='username']";
-    private const string PasswordInput = "[password='password']";
+    private const string PasswordInput = "[name='password']";
     private const string LoginLink = "input[type='submit'][value='Log In']";
+    private const string AccountPageTitle = "h1.title";
 
-    public async Task PerformLogin(ScenarioContext scenarioContext)
+    public async Task PerformLogin(FeatureContext featureContext)
     {
         logger.LogInformation("Performing login");
-        var user= scenarioContext.Get<TestUser>("CurrentUser");
+        var user= featureContext.Get<TestUser>("CurrentUser");
 
         logger.LogInformation("Fill userName and password, username {un}", user.Username);
         await page.FillAsync(UserNameInput, user.Username);
@@ -36,10 +37,28 @@ public class LoginPage(IPage page,ILogger logger)
         }
     }
 
-    public async Task ClickOnLink(string accountType)
+    public async Task CreateAccountTypeAndValidateIt(string accountType)
     {
         var link = page.Locator($"#leftPanel >> text={accountType.Trim()}");
         logger.LogInformation("Checking menu item {item}", link);
         await link.ClickAsync();
+        
+        logger.LogInformation("Verifying Open Account Page");
+        var title = await page.InnerTextAsync(AccountPageTitle);
+        title.Should().Contain(accountType, "because we should be on the Open New Account page");
+    }
+
+    public async Task Logout()
+    {
+        var menuItem = "Log Out";
+        var logout = page.Locator($"#leftPanel >> text={menuItem}");
+        await logout.ClickAsync();
+    }
+
+    public async Task ClickOn(string linkName)
+    {
+       var linkLocator= page.Locator($"#leftPanel >> text={linkName}");
+       logger.LogInformation("Clicking on link {link}", linkLocator);
+       await linkLocator.ClickAsync();
     }
 }

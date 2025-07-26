@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 namespace FabricParaBank.Tests.StepDefinitions;
 
 [Binding]
-public class AccountManagementStepDefinitions(ScenarioContext scenarioContext,ITestOutputHelper output) : PlaywrightTestBase
+public class AccountManagementStepDefinitions(FeatureContext featureContext,ITestOutputHelper output) : PlaywrightTestBase
 {
     private readonly ILogger _logger = output.ToLogger<AccountManagementStepDefinitions>();
     private RegistrationPage? _registrationPage;
@@ -43,26 +43,27 @@ public class AccountManagementStepDefinitions(ScenarioContext scenarioContext,IT
     [AfterScenario]
     public async Task Teardown()
     {
-        await DisposeAsync(); // clean shutdown
+        await DisposeAsync(); 
     }
 
     [When("I register a new user with a unique username")]
     public async Task WhenIRegisterANewUserWithAUniqueUsername()
     {
        await _registrationPage!.ClickOnRegister();
-       await _registrationPage.FillsTheUserInformation(scenarioContext);
+       await _registrationPage.FillsTheUserInformation(featureContext);
+       await _registrationPage.ClickOnRegisterButton();
     }
 
     [Then("I can see welcome message on the screen")]
     public async Task ThenICanSeeWelcomeMessageOnTheScreen()
     {
-        await _registrationPage!.ValidateWelcomeMessage(scenarioContext);
+        await _registrationPage!.ValidateWelcomeMessage(featureContext);
     }
 
     [When("I log in using the newly registered user credentials")]
     public async Task WhenILogInUsingTheNewlyRegisteredUserCredentials()
     {
-       await _loginPage!.PerformLogin(scenarioContext);
+       await _loginPage!.PerformLogin(featureContext);
     }
 
 
@@ -75,7 +76,58 @@ public class AccountManagementStepDefinitions(ScenarioContext scenarioContext,IT
     [When("I create a new account of type {string}")]
     public async Task WhenICreateANewAccountOfTypeAndCaptureTheAccountNumber(string accountType)
     {
-        await _loginPage!.ClickOnLink(accountType);
+        await _loginPage!.CreateAccountTypeAndValidateIt(accountType);
     }
 
+    [Then("I create a {string} account and validate it")]
+    public async Task ThenICreateAnAccountAndValidateIt(string accountType)
+    {
+        await _accountPage!.CreateAccountAndValidateIt(accountType,featureContext);
+    }
+
+    [When("I login using the newly registered user credentials")]
+    public async Task WhenILoginUsingTheNewlyRegisteredUserCredentials()
+    {
+        await _loginPage!.PerformLogin(featureContext);
+    }
+
+    [Then("I logout from the system")]
+    public async Task ThenILogoutFromTheSystem()
+    {
+        await _loginPage!.Logout();
+    }
+
+    [Then("I click on {string}")]
+    [When("I click on {string}")]
+    public async Task ThenIClick(string linkName)
+    {
+        await  _loginPage!.ClickOn(linkName);
+    }
+
+    [Then("I transfer {string} to the created account")]
+    public async Task ThenITransferToTheCreatedAccount(string amount)
+    {
+        await _accountPage!.TransferAmount(amount,featureContext);
+    }
+
+    [When("I pay a bill using the new account")]
+    public async Task WhenIPayABillUsingTheNewAccount()
+    {
+        await _accountPage!.PayTheBillUsingTheNewAccount(featureContext);
+    }
+
+    [Then("the payment should be processed and balance updated")]
+    public async Task ThenThePaymentShouldBeProcessedAndBalanceUpdated()
+    {
+        await _accountPage!.ValidatePaymentProcessed(featureContext);
+    }
+
+    [Then("Transfer has been successfully completed")]
+    public async Task ThenTransferHasBeenSuccessfullyCompleted()
+    {
+        await _accountPage!.ValidateTransferCompleted(featureContext);
+    }
+
+   
+ 
 }
