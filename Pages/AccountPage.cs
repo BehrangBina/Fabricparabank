@@ -43,7 +43,7 @@ public class AccountPage(IPage page,ILogger logger)
     private const string AccountOverViewRows = "#showOverview #accountTable tbody tr";
     
     
-    public async Task CreateAccountAndValidateIt(string accountType, ScenarioContext ScenarioContext)
+    public async Task CreateAccountAndValidateIt(string accountType, ScenarioContext scenarioContext)
     {
         accountType = accountType.ToUpper();
         logger.LogInformation("Selecting account type: {AccountType}", accountType);
@@ -59,7 +59,7 @@ public class AccountPage(IPage page,ILogger logger)
         dropdownText.Should().Contain(accountType, $"because the {accountType}");
         logger.LogInformation("Validating {accountType} page",  accountType);
         await ValidateTitle();
-        await StoreAccountNumber(ScenarioContext);
+        await StoreAccountNumber(scenarioContext);
         await ClickOnNewAccount();
         logger.LogInformation("Account created successfully with type {accountType}", accountType);
         await page.Locator(NewAccountNumber).WaitForAsync(new LocatorWaitForOptions
@@ -70,22 +70,22 @@ public class AccountPage(IPage page,ILogger logger)
         var accountNumber = await page.Locator(NewAccountNumber).TextContentAsync();
         accountNumber.Should().NotBeNullOrWhiteSpace("because the account number should not be empty");
         logger.LogInformation("New account number: {accountNumber}", accountNumber);
-        ScenarioContext.Add(nameof(SharedData.FromAccountId), accountNumber);
+        scenarioContext.Add(nameof(SharedData.FromAccountId), accountNumber);
     }
-    public async Task TransferAmount(string amount, ScenarioContext ScenarioContext)
+    public async Task TransferAmount(string amount, ScenarioContext scenarioContext)
     {
         var amountSelector =  page.Locator(AmountTextInput);
         logger.LogInformation("Validating amount: {amountSelector}", amountSelector);
-        ScenarioContext.Add(nameof(SharedData.TransferAmount), amount);
+        scenarioContext.Add(nameof(SharedData.TransferAmount), amount);
         await amountSelector.FillAsync(amount);
-        await TransferFromNewAccount(ScenarioContext);
+        await TransferFromNewAccount(scenarioContext);
     }
 
-    private async Task TransferFromNewAccount(ScenarioContext ScenarioContext)
+    private async Task TransferFromNewAccount(ScenarioContext scenarioContext)
     {
         logger.LogInformation("Selecting billing for the new account");
-        var toAccountNumber = ScenarioContext.Get<string>(nameof(SharedData.ToAccountId));
-        var fromAccountNumber = ScenarioContext.Get<string>(nameof(SharedData.FromAccountId));
+        var toAccountNumber = scenarioContext.Get<string>(nameof(SharedData.ToAccountId));
+        var fromAccountNumber = scenarioContext.Get<string>(nameof(SharedData.FromAccountId));
 
         logger.LogInformation("Transferring to  {toAccountNumber}", toAccountNumber);
         await page.SelectOptionAsync(FromAccountNumber, new SelectOptionValue { Label = fromAccountNumber });
@@ -95,7 +95,7 @@ public class AccountPage(IPage page,ILogger logger)
         await page.SelectOptionAsync(ToAccountNumber, new SelectOptionValue { Label = toAccountNumber });
         var toAccountNumberTxt = await page.EvaluateAsync<string>($"() => document.querySelector('{ToAccountNumber}').value");
        
-        if (toAccountNumberTxt!.Contains(toAccountNumber))
+        if (toAccountNumberTxt.Contains(toAccountNumber))
         {
             await page.SelectOptionAsync(ToAccountNumber, new SelectOptionValue { Index = 0 });
         }
@@ -109,10 +109,10 @@ public class AccountPage(IPage page,ILogger logger)
         toAccountNumberTxt.Should().NotBeNullOrWhiteSpace("to account number should not be empty");
         await page.ClickAsync(TransferButton);
     }
-    public async Task PayTheBillUsingTheNewAccount(ScenarioContext ScenarioContext ,string billAmount)
+    public async Task PayTheBillUsingTheNewAccount(ScenarioContext scenarioContext ,string billAmount)
     {
         logger.LogInformation("Generating random payee user");
-        var payeeUser = ScenarioContext.Get<TestUser>(nameof(SharedData.CurrentUser));
+        var payeeUser = scenarioContext.Get<TestUser>(nameof(SharedData.CurrentUser));
         logger.LogInformation("Filling payee information: {payeeUser}", payeeUser);
          
         logger.LogInformation("Filling payee name: {PayeeName}", payeeUser.Username);
@@ -129,7 +129,7 @@ public class AccountPage(IPage page,ILogger logger)
         logger.LogInformation("Filling phone number: {PhoneNumber}", payeeUser.PhoneNumber);
         await page.FillAsync(PhoneNumber, payeeUser.PhoneNumber);
         
-        var accountId = ScenarioContext.Get<string>(nameof(SharedData.FromAccountId));
+        var accountId = scenarioContext.Get<string>(nameof(SharedData.FromAccountId));
         logger.LogInformation("Filling account number: {AccountNumber}", accountId);
         await page.FillAsync(AccountNumber, accountId);
         await page.FillAsync(VerifyAccount, accountId);
@@ -138,14 +138,14 @@ public class AccountPage(IPage page,ILogger logger)
         await page.FillAsync(Amount, Convert.ToDecimal(billAmount).ToString(CultureInfo.CurrentCulture));
         
         logger.LogInformation("Clicking on send payment button {SendPaymentButton}", SendPaymentButton);
-        ScenarioContext.Add(nameof(SharedData.PayeeUser), payeeUser);
+        scenarioContext.Add(nameof(SharedData.PayeeUser), payeeUser);
         await page.ClickAsync(SendPaymentButton);
     }
     
-    public async Task PayTheBillUsingTheNewAccount(ScenarioContext ScenarioContext)
+    public async Task PayTheBillUsingTheNewAccount(ScenarioContext scenarioContext)
     {
         logger.LogInformation("Generating random payee user");
-        var payeeUser = ScenarioContext.Get<TestUser>(nameof(SharedData.CurrentUser));
+        var payeeUser = scenarioContext.Get<TestUser>(nameof(SharedData.CurrentUser));
         logger.LogInformation("Filling payee information: {payeeUser}", payeeUser);
          
         logger.LogInformation("Filling payee name: {PayeeName}", payeeUser.Username);
@@ -162,20 +162,20 @@ public class AccountPage(IPage page,ILogger logger)
         logger.LogInformation("Filling phone number: {PhoneNumber}", payeeUser.PhoneNumber);
         await page.FillAsync(PhoneNumber, payeeUser.PhoneNumber);
         
-        var accountId = ScenarioContext.Get<string>(nameof(SharedData.FromAccountId));
+        var accountId = scenarioContext.Get<string>(nameof(SharedData.FromAccountId));
         logger.LogInformation("Filling account number: {AccountNumber}", accountId);
         await page.FillAsync(AccountNumber, accountId);
         await page.FillAsync(VerifyAccount, accountId);
         
-        var amount= ScenarioContext.Get<string>(nameof(SharedData.TransferAmount));
+        var amount= scenarioContext.Get<string>(nameof(SharedData.TransferAmount));
         logger.LogInformation("Filling amount: {Amount}", amount);
         await page.FillAsync(Amount, Convert.ToInt32(amount). ToString("F2"));
         
         logger.LogInformation("Clicking on send payment button {SendPaymentButton}", SendPaymentButton);
-        ScenarioContext.Add(nameof(SharedData.PayeeUser), payeeUser);
+        scenarioContext.Add(nameof(SharedData.PayeeUser), payeeUser);
         await page.ClickAsync(SendPaymentButton);
     }
-    private async Task StoreAccountNumber(ScenarioContext ScenarioContext)
+    private async Task StoreAccountNumber(ScenarioContext scenarioContext)
     {
         var accountNumber = await page.Locator(AccountId).TextContentAsync();
         if (string.IsNullOrEmpty(accountNumber))
@@ -185,7 +185,7 @@ public class AccountPage(IPage page,ILogger logger)
         }
         accountNumber.Should().NotBeNullOrWhiteSpace();
         logger.LogInformation("Validating {accountNumber}", accountNumber);
-        ScenarioContext.Add(nameof(SharedData.ToAccountId), accountNumber);
+        scenarioContext.Add(nameof(SharedData.ToAccountId), accountNumber);
     }
 
     private async Task ValidateTitle()
@@ -206,11 +206,11 @@ public class AccountPage(IPage page,ILogger logger)
         await locator.ClickAsync();
     }
 
-    public async Task ValidatePaymentProcessed(ScenarioContext ScenarioContext)
+    public async Task ValidatePaymentProcessed(ScenarioContext scenarioContext)
     {
       
-        var fromAccountId = ScenarioContext.Get<string>(nameof(SharedData.FromAccountId));
-        var toAccountId = ScenarioContext.Get<string>(nameof(SharedData.ToAccountId));
+        var fromAccountId = scenarioContext.Get<string>(nameof(SharedData.FromAccountId));
+        var toAccountId = scenarioContext.Get<string>(nameof(SharedData.ToAccountId));
          
         // Expected data
         var expectedAccounts = new[]
@@ -254,11 +254,11 @@ public class AccountPage(IPage page,ILogger logger)
         thirdAccountId.Should().NotBeNullOrEmpty().And.Contain(totalBalance,"because the total balance should match");
     }
 
-    public async Task ValidateTransferCompleted(ScenarioContext ScenarioContext)
+    public async Task ValidateTransferCompleted(ScenarioContext scenarioContext)
     {
-        var accountId = ScenarioContext.Get<string>(nameof(SharedData.FromAccountId));
-        var currentUser = ScenarioContext.Get<TestUser>(nameof(SharedData.CurrentUser));
-        var transferAmount = ScenarioContext.Get<string>(nameof(SharedData.TransferAmount));
+        var accountId = scenarioContext.Get<string>(nameof(SharedData.FromAccountId));
+        var currentUser = scenarioContext.Get<TestUser>(nameof(SharedData.CurrentUser));
+        var transferAmount = scenarioContext.Get<string>(nameof(SharedData.TransferAmount));
      
         const string expectedTitle = "Transfer Complete!";
         var transferTitle = await page.Locator(TransferTitle).TextContentAsync();
@@ -274,16 +274,16 @@ public class AccountPage(IPage page,ILogger logger)
         
         logger.LogInformation("Transfer completed successfully for user {user} with account {accountId} and amount {amount}",
             currentUser.Username, accountId, transferAmount);
-        ScenarioContext.Add(nameof(SharedData.TransferCompleted), true);
+        scenarioContext.Add(nameof(SharedData.TransferCompleted), true);
     }
 
-    public async Task ValidateBillPayment(ScenarioContext ScenarioContext)
+    public async Task ValidateBillPayment(ScenarioContext scenarioContext)
     {
         logger.LogInformation("Validating bill payment");
  
-        var expectedPayeeUser = ScenarioContext.Get<TestUser>(nameof(SharedData.PayeeUser));
-        var expectedFromAccountId = ScenarioContext.Get<string>(nameof(SharedData.FromAccountId));
-        var expectedAmount = ScenarioContext.Get<string>(nameof(SharedData.BillPaymentAmount));
+        var expectedPayeeUser = scenarioContext.Get<TestUser>(nameof(SharedData.PayeeUser));
+        var expectedFromAccountId = scenarioContext.Get<string>(nameof(SharedData.FromAccountId));
+        var expectedAmount = scenarioContext.Get<string>(nameof(SharedData.BillPaymentAmount));
         
         var fromAccountId = await page.Locator(PaymentFromAccountValue).TextContentAsync();
         if(string.IsNullOrEmpty(fromAccountId))

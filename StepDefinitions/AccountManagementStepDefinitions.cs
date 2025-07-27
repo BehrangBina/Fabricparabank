@@ -140,6 +140,6 @@ public class AccountManagementStepDefinitions(ScenarioContext ScenarioContext,IT
     [Then("I can verify the bill payment was successful")]
     public async Task ThenICanVerifyTheBillPaymentWasSuccessful()
     {
-        await _accountPage.ValidateBillPayment(ScenarioContext);
+        await _accountPage!.ValidateBillPayment(ScenarioContext);
     }
 }
