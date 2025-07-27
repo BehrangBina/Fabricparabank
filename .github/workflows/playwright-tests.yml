@@ -1,0 +1,92 @@
+# Runs Playwright-based end-to-end tests for the FabricParaBank project
+# The workflow executes on every push to the main or develop branch and for all pull requests.
+# It can also be triggered manually via the "Run workflow" button.
+
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: "Browser to run tests on (chromium, firefox, webkit, all)"
+        required: false
+        default: "chromium"
+      environment:
+        description: "Target environment (production or staging)"
+        required: false
+        default: "production"
+      headless:
+        description: "Run in headless mode (true or false)"
+        required: false
+        default: "true"
+
+env:
+  DOTNET_VERSION: "9.0.x"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  DOTNET_NOLOGO: "1"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore NuGet packages
+        run: dotnet restore FabricParaBank.Tests.csproj
+
+      - name: Build project (Release)
+        run: dotnet build FabricParaBank.Tests.csproj --configuration Release --no-restore
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/FabricParaBank.Tests.csproj') }}
+
+      - name: Install Playwright browsers
+        run: |
+          dotnet build
+          pwsh bin/Release/net9.0/playwright.ps1 install --with-deps chromium
+
+      - name: Ensure headless mode in configuration
+        run: |
+          # Makes headless=true in appsettings.json to suit the CI environment.
+          jq '.TestSettings.Browser.Headless = true' appsettings.json > tmp.json
+          mv tmp.json appsettings.json
+
+      - name: Run Playwright tests
+        run: |
+          dotnet test FabricParaBank.Tests.csproj \
+            --configuration Release \
+            --no-build \
+            --logger "trx;LogFileName=TestResults-chromium.trx" \
+            --results-directory TestResults
+        env:
+          BROWSER: chromium
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-chromium
+          path: TestResults/
+
+      - name: Upload Playwright trace, screenshots and videos (if they exist)
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-artifacts-chromium
+          path: |
+            test-results/
+            playwright-report/
