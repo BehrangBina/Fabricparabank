@@ -13,10 +13,10 @@ public class LoginPage(IPage page,ILogger logger)
     private const string LoginLink = "input[type='submit'][value='Log In']";
     private const string AccountPageTitle = "h1.title";
 
-    public async Task PerformLogin(FeatureContext featureContext)
+    public async Task PerformLogin(ScenarioContext ScenarioContext)
     {
         logger.LogInformation("Performing login");
-        var user= featureContext.Get<TestUser>("CurrentUser");
+        var user= ScenarioContext.Get<TestUser>("CurrentUser");
 
         logger.LogInformation("Fill userName and password, username {un}", user.Username);
         await page.FillAsync(UserNameInput, user.Username);

@@ -29,7 +29,7 @@ public class RegistrationPage(IPage page,ILogger logger)
         await page.ClickAsync(RegisterLink);
     }
 
-    public async Task FillsTheUserInformation(FeatureContext featureContext)
+    public async Task FillsTheUserInformation(ScenarioContext ScenarioContext)
     {
         var userData = Helper.GetTestUser(logger);
         logger.LogInformation("Fills user data with locator {Locator} value {Value}", FirstNameInput, userData.FirstName);
@@ -66,14 +66,14 @@ public class RegistrationPage(IPage page,ILogger logger)
         await page.FillAsync(RepeatedPasswordInput, userData.Password);
         
         logger.LogInformation("adding user to the scenario context {sc}",userData);
-        featureContext.Add("CurrentUser", userData);
+        ScenarioContext.Add("CurrentUser", userData);
     }
 
-    public async Task ValidateWelcomeMessage(FeatureContext featureContext)
+    public async Task ValidateWelcomeMessage(ScenarioContext ScenarioContext)
     {
         logger.LogInformation("ValidateWelcomeMessage");
         logger.LogInformation("Getting user name from scenario context");
-        var testUser = featureContext.Get<TestUser>("CurrentUser");
+        var testUser = ScenarioContext.Get<TestUser>("CurrentUser");
         var userName = testUser.Username;
         var expectedMessage = $"Welcome {userName}";
         var successMessage = await page.Locator(WelcomeMessage).InnerTextAsync();

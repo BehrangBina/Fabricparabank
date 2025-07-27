@@ -198,25 +198,34 @@ namespace FabricParaBank.Tests.Fearures
         await testRunner.ThenAsync("I create a \"Savings\" account and validate it", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 30
-        await testRunner.AndAsync("I click on \"Transfer Funds\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 31
-        await testRunner.AndAsync("I transfer \"100\" to the created account", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 32
-        await testRunner.ThenAsync("Transfer has been successfully completed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 33
-        await testRunner.AndAsync("I click on \"Bill Pay\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 34
-        await testRunner.WhenAsync("I pay a bill using the new account", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 35
         await testRunner.AndAsync("I click on \"Accounts Overview\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 36
+#line 31
         await testRunner.ThenAsync("the payment should be processed and balance updated", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 32
+        await testRunner.AndAsync("I click on \"Transfer Funds\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 33
+        await testRunner.AndAsync("I transfer \"100\" from the created account", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 34
+        await testRunner.ThenAsync("Transfer has been successfully completed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 35
+        await testRunner.AndAsync("I click on \"Bill Pay\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 37
+        await testRunner.WhenAsync("I pay a bill using the new account with \"120\" amount", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 38
+        await testRunner.ThenAsync("I can verify the bill payment was successful", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 42
+        await testRunner.WhenAsync("I Search transaction from the newly account created", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 43
+        await testRunner.ThenAsync("the details displayed in the JSON response are valid", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

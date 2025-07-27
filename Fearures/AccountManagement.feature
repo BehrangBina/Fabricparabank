@@ -24,13 +24,20 @@ So that I can use the core features of the Para Bank application
           | Update Contact Info |
           | Request Loan        |
           | Log Out             |
-        # Create a saving account, transfer amount, pay bill
+          # Create a saving account, transfer amount, pay bill
         When I create a new account of type "Open New Account"
         Then I create a "Savings" account and validate it
-        And I click on "Transfer Funds"      
-        And I transfer "100" to the created account
-        Then Transfer has been successfully completed
-        And I click on "Bill Pay"
-        When I pay a bill using the new account      
         And I click on "Accounts Overview"
         Then the payment should be processed and balance updated
+        And I click on "Transfer Funds"      
+        And I transfer "100" from the created account
+        Then Transfer has been successfully completed
+        And I click on "Bill Pay"
+        # When I pay a bill using the new account      
+        When I pay a bill using the new account with "120" amount  
+        Then I can verify the bill payment was successful 
+
+        
+        # API Call: Find Transactions 
+        When I Search transaction from the newly account created
+        Then the details displayed in the JSON response are valid

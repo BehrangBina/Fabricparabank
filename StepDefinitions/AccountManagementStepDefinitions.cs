@@ -1,4 +1,5 @@
-﻿using FabricParaBank.Tests.Pages;
+﻿using FabricParaBank.Tests.Model;
+using FabricParaBank.Tests.Pages;
 using FabricParaBank.Tests.Util;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -8,8 +9,9 @@ using Xunit.Abstractions;
 
 namespace FabricParaBank.Tests.StepDefinitions;
 
+
 [Binding]
-public class AccountManagementStepDefinitions(FeatureContext featureContext,ITestOutputHelper output) : PlaywrightTestBase
+public class AccountManagementStepDefinitions(ScenarioContext ScenarioContext,ITestOutputHelper output) : PlaywrightTestBase
 {
     private readonly ILogger _logger = output.ToLogger<AccountManagementStepDefinitions>();
     private RegistrationPage? _registrationPage;
@@ -50,20 +52,20 @@ public class AccountManagementStepDefinitions(FeatureContext featureContext,ITes
     public async Task WhenIRegisterANewUserWithAUniqueUsername()
     {
        await _registrationPage!.ClickOnRegister();
-       await _registrationPage.FillsTheUserInformation(featureContext);
+       await _registrationPage.FillsTheUserInformation(ScenarioContext);
        await _registrationPage.ClickOnRegisterButton();
     }
 
     [Then("I can see welcome message on the screen")]
     public async Task ThenICanSeeWelcomeMessageOnTheScreen()
     {
-        await _registrationPage!.ValidateWelcomeMessage(featureContext);
+        await _registrationPage!.ValidateWelcomeMessage(ScenarioContext);
     }
 
     [When("I log in using the newly registered user credentials")]
     public async Task WhenILogInUsingTheNewlyRegisteredUserCredentials()
     {
-       await _loginPage!.PerformLogin(featureContext);
+       await _loginPage!.PerformLogin(ScenarioContext);
     }
 
 
@@ -82,13 +84,13 @@ public class AccountManagementStepDefinitions(FeatureContext featureContext,ITes
     [Then("I create a {string} account and validate it")]
     public async Task ThenICreateAnAccountAndValidateIt(string accountType)
     {
-        await _accountPage!.CreateAccountAndValidateIt(accountType,featureContext);
+        await _accountPage!.CreateAccountAndValidateIt(accountType,ScenarioContext);
     }
 
     [When("I login using the newly registered user credentials")]
     public async Task WhenILoginUsingTheNewlyRegisteredUserCredentials()
     {
-        await _loginPage!.PerformLogin(featureContext);
+        await _loginPage!.PerformLogin(ScenarioContext);
     }
 
     [Then("I logout from the system")]
@@ -104,30 +106,40 @@ public class AccountManagementStepDefinitions(FeatureContext featureContext,ITes
         await  _loginPage!.ClickOn(linkName);
     }
 
-    [Then("I transfer {string} to the created account")]
+    [Then("I transfer {string} from the created account")]
     public async Task ThenITransferToTheCreatedAccount(string amount)
     {
-        await _accountPage!.TransferAmount(amount,featureContext);
+        await _accountPage!.TransferAmount(amount,ScenarioContext);
     }
 
     [When("I pay a bill using the new account")]
     public async Task WhenIPayABillUsingTheNewAccount()
     {
-        await _accountPage!.PayTheBillUsingTheNewAccount(featureContext);
+        await _accountPage!.PayTheBillUsingTheNewAccount(ScenarioContext);
     }
-
+    [When("I pay a bill using the new account with {string} amount")]
+    public async Task WhenIPayABillUsingTheNewAccountWithAmount(string billAmount)
+    {
+        _logger.LogInformation("Paying a bill using the new account with amount: {BillAmount}", billAmount);
+        ScenarioContext.Add(nameof(SharedData.BillPaymentAmount), billAmount);
+        await _accountPage!.PayTheBillUsingTheNewAccount(ScenarioContext, billAmount);
+    }
+   
     [Then("the payment should be processed and balance updated")]
     public async Task ThenThePaymentShouldBeProcessedAndBalanceUpdated()
     {
-        await _accountPage!.ValidatePaymentProcessed(featureContext);
+        await _accountPage!.ValidatePaymentProcessed(ScenarioContext);
     }
 
     [Then("Transfer has been successfully completed")]
     public async Task ThenTransferHasBeenSuccessfullyCompleted()
     {
-        await _accountPage!.ValidateTransferCompleted(featureContext);
+        await _accountPage!.ValidateTransferCompleted(ScenarioContext);
     }
 
-   
- 
+    [Then("I can verify the bill payment was successful")]
+    public async Task ThenICanVerifyTheBillPaymentWasSuccessful()
+    {
+        await _accountPage.ValidateBillPayment(ScenarioContext);
+    }
 }

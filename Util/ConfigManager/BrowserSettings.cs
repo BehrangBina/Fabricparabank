@@ -6,5 +6,5 @@ public class BrowserSettings
     public bool Headless { get; set; }
     public bool SlowMotion { get; set; }
     public int SlowMotionDelay { get; set; }
-    public ViewportSettings Viewport { get; set; }
+    public required ViewportSettings Viewport { get; set; }
 }

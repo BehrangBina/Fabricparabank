@@ -2,6 +2,6 @@
 
 public class TestSettings
 {
-    public string BaseUrl { get; set; }
-    public BrowserSettings Browser { get; set; }
+    public required string BaseUrl { get; set; }
+    public required BrowserSettings Browser { get; set; }
 }

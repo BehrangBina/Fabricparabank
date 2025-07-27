@@ -5,10 +5,10 @@ namespace FabricParaBank.Tests.Util;
 
 public abstract class PlaywrightTestBase : IAsyncLifetime
 {
-    protected IPlaywright Playwright { get; private set; }
-    protected IBrowser Browser { get; private set; }
-    protected IBrowserContext Context { get; private set; }
-    protected IPage Page { get; private set; }
+    protected IPlaywright Playwright { get; private set; } = null!;
+    protected IBrowser Browser { get; private set; } = null!;
+    protected IBrowserContext Context { get; private set; } = null!;
+    protected IPage Page { get; private set; } = null!;
     protected TestSettings Settings { get; private set; } = ConfigLoader.Load();
 
 
