@@ -6,7 +6,10 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
+      - 'feature/**'
   pull_request:
     branches: [ main, develop ]
   workflow_dispatch:
@@ -45,25 +48,23 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore FabricParaBank.Tests.csproj
 
+      - name: Ensure headless mode in configuration
+        run: |
+          # Ensure headless=true before build so it gets copied to test output.
+          jq '.TestSettings.Browser.Headless = true' appsettings.json > tmp.json
+          mv tmp.json appsettings.json
+
       - name: Build project (Release)
         run: dotnet build FabricParaBank.Tests.csproj --configuration Release --no-restore
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/FabricParaBank.Tests.csproj') }}
 
       - name: Install Playwright browsers
-        run: |
-          dotnet build
-          pwsh bin/Release/net9.0/playwright.ps1 install --with-deps chromium
-
-      - name: Ensure headless mode in configuration
-        run: |
-          # Makes headless=true in appsettings.json to suit the CI environment.
-          jq '.TestSettings.Browser.Headless = true' appsettings.json > tmp.json
-          mv tmp.json appsettings.json
+        run: pwsh bin/Release/net9.0/playwright.ps1 install --with-deps chromium
 
       - name: Run Playwright tests
         run: |
@@ -77,14 +78,14 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-chromium
           path: TestResults/
 
       - name: Upload Playwright trace, screenshots and videos (if they exist)
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-artifacts-chromium
           path: |
